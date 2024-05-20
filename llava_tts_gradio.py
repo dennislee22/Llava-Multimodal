@@ -362,9 +362,10 @@ title_markdown = ("""
 """)
 
 tos_markdown = ("""
-![](/cldr.png)
+#
 """)
 
+gr.HTML("<img src='/file=cldr.png'>")   
 
 learn_more_markdown = ("""
 ###
@@ -531,6 +532,7 @@ if __name__ == "__main__":
     demo.queue(
         api_open=False
     ).launch(
+        allowed_paths=["/home/cdsw"],
         server_name=args.host,
         server_port=args.port,
         share=args.share
