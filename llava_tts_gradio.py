@@ -15,6 +15,11 @@ from llava.utils import (build_logger, server_error_msg,
 import hashlib
 
 # added below
+#from playsound import playsound
+#import simpleaudio as sa
+#from pydub import AudioSegment
+from io import BytesIO
+
 from transformers import pipeline
 import torch
 import numpy as np
@@ -55,6 +60,7 @@ def transcribe(audio):
 
     return result_text
 
+
 def text_to_speech(text, file_path):
     language = 'en'
 
@@ -66,9 +72,12 @@ def text_to_speech(text, file_path):
 
     return file_path
 
-def update_output_textbox(audio):
-    transcribed_text = transcribe(audio)
-    textbox.text = transcribed_text
+#def update_output_textbox(audio):
+#    transcribed_text = transcribe(audio)
+#    textbox.text = transcribed_text
+
+def myaudio():
+    return "/home/cdsw/voicetmp.mp3"
 
 # added above
 
@@ -318,15 +327,20 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
                     state.messages[-1][-1] = output
                     yield (state, state.to_gradio_chatbot()) + (disable_btn, disable_btn, disable_btn, enable_btn, enable_btn)
                     return
-                time.sleep(0.03)
+                time.sleep(0.09)
     except requests.exceptions.RequestException as e:
         state.messages[-1][-1] = server_error_msg
         yield (state, state.to_gradio_chatbot()) + (disable_btn, disable_btn, disable_btn, enable_btn, enable_btn)
         return
-
+    
     state.messages[-1][-1] = state.messages[-1][-1][:-1]
     yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
-
+    
+    speech_folder_path = '/home/cdsw/voicetmp.mp3'
+    text_to_speech(output, speech_folder_path)
+    #playsound(speech_folder_path)
+    #gr.Audio(speech_folder_path)
+    
     finish_tstamp = time.time()
     logger.info(f"{output}")
 
@@ -344,7 +358,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         fout.write(json.dumps(data) + "\n")
 
 title_markdown = ("""
-# 🌋 LLaVA Demo on Cloudera ML
+# 🌋 Multimodal Chat🤖 on Cloudera ML
 """)
 
 tos_markdown = ("""
@@ -423,7 +437,7 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
                     #stop_btn = gr.Button(value="⏹️  Stop Generation", interactive=False)
                     regenerate_btn = gr.Button(value="🔄  Regenerate", interactive=False)
                     clear_btn = gr.Button(value="🗑️  Clear", interactive=False)
-
+                #ttsbox = gr.Audio("asd.mp3")
         if not embed_mode:
             gr.Markdown(tos_markdown)
             gr.Markdown(learn_more_markdown)
@@ -463,7 +477,7 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
             [state, model_selector, temperature, top_p, max_output_tokens],
             [state, chatbot] + btn_list,
             concurrency_limit=concurrency_count
-        )
+        )  
 
         submit_btn.click(
             add_text,
@@ -521,4 +535,3 @@ if __name__ == "__main__":
         server_port=args.port,
         share=args.share
     )
-
