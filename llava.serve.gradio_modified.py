@@ -358,14 +358,12 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         fout.write(json.dumps(data) + "\n")
 
 title_markdown = ("""
-# 🌋 Multimodal Chat🤖 on Cloudera ML
+# 🌋 Multimodal محادثة 🤖 on Cloudera ML
 """)
 
 tos_markdown = ("""
 #
-""")
-
-gr.HTML("<img src='/file=cldr.png'>")   
+""") 
 
 learn_more_markdown = ("""
 ###
@@ -386,7 +384,7 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
 
         if not embed_mode:
             gr.Markdown(title_markdown)
-
+            gr.HTML("<img src='/file=stc.png'>")
         with gr.Row():
             with gr.Column(scale=3):
                 with gr.Row(elem_id="model_selector_row"):
@@ -430,7 +428,7 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
                     with gr.Column(scale=8):
                         textbox.render()
                     with gr.Column(scale=1, min_width=50):
-                        submit_btn = gr.Button(value="問我", variant="primary")
+                        submit_btn = gr.Button(value="Ask Me", variant="primary")
                 with gr.Row(elem_id="buttons") as button_row:
                     #upvote_btn = gr.Button(value="👍  Upvote", interactive=False)
                     #downvote_btn = gr.Button(value="👎  Downvote", interactive=False)
@@ -439,6 +437,7 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
                     regenerate_btn = gr.Button(value="🔄  Regenerate", interactive=False)
                     clear_btn = gr.Button(value="🗑️  Clear", interactive=False)
                 #ttsbox = gr.Audio("asd.mp3")
+        gr.HTML("<img src='/file=cldr1.png'>")        
         if not embed_mode:
             gr.Markdown(tos_markdown)
             gr.Markdown(learn_more_markdown)
@@ -507,7 +506,6 @@ def build_demo(embed_mode, cur_dir=None, concurrency_count=10):
             )
         else:
             raise ValueError(f"Unknown model list mode: {args.model_list_mode}")
-
     return demo
 
 
